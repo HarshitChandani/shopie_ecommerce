@@ -1,0 +1,60 @@
+body{
+    font-family: "Trirong",serif;
+}
+
+.button{
+   background-color: #f42d2a;
+   color: #FFF3CF;
+   font-weight: bold;
+}
+.button:hover{
+   color:white;
+}
+
+.text-color-1{
+   color:#058805
+}
+
+.primary-color{
+   color:#ec1411;
+}
+
+.border-radius{
+   border-radius: 5px;
+}
+
+.primary-background-color{
+   background-color:#ec1411
+}
+.wishList-heart{
+   top: 0%;
+   position: absolute;
+   right: 0;
+   width: auto;
+   max-width: 250px !important;
+   padding:5px;
+   color: white;
+   background-color: white
+   }
+
+.modal-header-style{
+   color: white;
+   background-color: #2b3e54;
+   font-weight: 500;
+   font-size: large;
+   text-shadow: 0px 1px 4px white
+}
+
+.create-order-loading{
+   visibility: hidden;
+   background-color: rgba(255,255,255,0.7);
+   position: absolute;
+   z-index: +100 !important;
+   width: 50%;
+   height:50%;
+}
+.create-order-loading img{
+   position: relative;
+   top:10%;
+   left:55%;
+}

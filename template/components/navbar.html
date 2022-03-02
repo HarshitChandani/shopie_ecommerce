@@ -1,0 +1,71 @@
+<nav class="navbar navbar-expand-xl navbar-light p-2" style="font-size:22px">
+   <div class="container-fluid justify-content-between">
+      <!-- Left elements -->
+      <div class="d-flex">
+        <!-- Brand -->
+        <a class="navbar-brand mb-1 d-flex align-items-center" href="{% url 'Default' %}" style="margin-right:0 !important;padding:20px">
+          <img
+            src="/static/images/logo.jpg"
+            height="55"
+            alt="MDB Logo"
+            loading="lazy"
+            style="margin-top: 2px;"
+          />
+        </a>
+  
+        <!-- Search form -->
+      </div>
+      <!-- Left elements -->
+  
+      <!-- Center elements -->
+
+   <ul class="navbar-nav flex-row d-none d-md-flex">
+      <li class="nav-item active">
+         <a class="nav-link" href="#">
+            <div class="occasions-navbar-section primary-color">
+               {% for data in occasion_data %}
+                  <a href="{% url 'Occasion-Products' data.slug%}" class="primary-color" style="text-decoration:none;">|{{data.title}}|</a>
+               {% endfor %}
+            </div>
+         </a>
+      </li>
+
+   </ul>
+
+      <!-- Center elements -->
+  
+      <!-- Right elements -->
+      <ul class="navbar-nav flex-row">
+         <li class="nav-item dropdown me-3 me-lg-1" >
+            <a
+              class="nav-link dropdown-toggle hidden-arrow"
+              href="#"
+              id="navbarDropdownMenuLink"
+              role="button"
+              data-mdb-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="fas fa-bell fa-lg" style="color:#2b3e54;"></i>
+              <span class="badge rounded-pill badge-notification bg-danger" id="notifications">12</span>
+            </a>
+           </li>
+            <li class="nav-item me-3 me-lg-1" style="margin-top:6px">
+               <a href="javascript:void(0)" data-mdb-toggle="modal" data-mdb-target="#cartModel" title="Cart">
+                  <i class="fa-solid fa-cart-shopping fa-lg"  style="color:#2b3e54" > </i>
+                  <span class="badge rounded-pill badge-notification bg-danger " id="cart-total-items">0</span>
+               </a>
+               
+            </li>
+            <li class="nav-item me-3 me-lg-1">
+               <a class="nav-link" 
+               data-mdb-toggle="tooltip" role="button"
+               data-mdb-placement="bottom" title="Login"
+               href="{% url 'loginForm' %}">
+               <i class="fa-solid fa-user fa-lg" style="color:#2b3e54"></i>
+               </a>
+            </li>
+            
+      </ul>
+      <!-- Right elements -->
+    </div>
+ </nav>

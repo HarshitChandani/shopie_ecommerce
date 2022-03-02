@@ -1,0 +1,19 @@
+{% load static %}
+
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title>E-Commerce</title>
+      {% include "components/links.html" %}
+   </head>
+   <body>
+      <div class="container-fluid p-1 m-0">
+         {% include 'components/navbar.html' %}
+         {% block content %}
+
+         {% endblock content %}
+         {% include "components/cart.html" %}
+      </div>
+   </body>
+</html>

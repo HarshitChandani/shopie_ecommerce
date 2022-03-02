@@ -1,0 +1,76 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+   <div class="container m-4 ">
+      <div class="d-flex flex-column">
+         <div class="row">
+            {% csrf_token %}
+            <div class="col-lg-5 text-center">
+               <div class="product-image-block">
+                  <img src="{{product_data.lg_image}}" class="img-fluid" style="cursor:pointer;box-shadow: 0px 0px 4px grey;
+                  padding: 10px;border-radius: 5px;" />
+               </div>               
+            </div>
+            <div class="col-lg-7 p-4" style="box-shadow: 0px 0px 8px #8e8e8e;border-radius:5px">
+               <div class="product-title text-dark" style="font-size:18px">
+                  {{product_data.brand_id.title | upper}} 
+                  {{product_data.title | upper }} 
+                  {{product_data.occasion_id.title | upper }} 
+                  ({{product_data.fitting_type | upper}})
+               </div>
+               <div class="product-price-block">
+                  <div class="final-product-price text-success mt-2" style="font-size:large;font-weight:600">₹ {{product_data.selling_price}}</div>
+                  <div class="MRP-price text-muted" style="font-size:medium">
+                     <del>₹ {{product_data.MRP}}</del>
+                     <span class="discount-percent text-danger mx-3" style="font-size:larger;">
+                        {{product_data.discount_percent}}% OFF
+                     </span>
+                  </div>
+                  <div class="available-sizes my-2">
+                     <div class="size-title text-muted my-1" style="font-weight:bold">Sizes:</div>
+                     {% for size in  available_sizes_list%}
+                        <div class="btn-group">
+                           <input type="radio" class="btn-check" name="radio-sizes" id="{{size}}" value="{{size}}" autocomplete="off" />
+                           <label class="btn btn-light text-dark fw-bold" for="{{size}}" >{{size}}</label>
+                        </div>
+                     {% endfor %}
+                  </div>
+                  <div class="description-block my-3">
+                     <div class="description-block-title text-muted my-1" style="font-weight:bold">Descriptions:</div>
+                     <div class="full-description text-dark" style="font-size:small">{% lorem 1 random %}</div>
+                  </div>
+                  <div class="product-brand-block">
+                     <span class="brand-title my-1 text-muted" style="font-weight:bold">Brand: </span>
+                     <span class="text-dark">{{product_data.brand_id.title | capfirst}}</span>
+                  </div>
+                  <div class="product-fabric-block">
+                     <span class="fabric-title my-1 text-muted" style="font-weight:bold">Fabric:</span>
+                     <span class="text-dark">{{product_data.fabric | capfirst}}</span>
+                  </div>
+                  <div class="product-pattern-block">
+                     <span class="pattern-title my-1 text-muted" style="font-weight:bold">Pattern: </span>
+                     <span class="text-dark">{{product_data.pattern_id.title | capfirst}}</span>
+                  </div>
+                  <div class="product-color-block">
+                     <span class="color-title my-1 text-muted" style="font-weight:bold">Color: </span>
+                     <span class="text-dark"></span>
+                  </div>
+                  <div class="product-occasion-block">
+                     <span class="occasion-title my-1 text-muted" style="font-weight:bold">Occasion: </span>
+                     <span class="text-dark">{{product_data.occasion_id.title | capfirst}}</span>
+                  </div>
+                  <div class="main-function-block mt-2">
+                     <span class="add-to-cart-btn">
+                        <button class="btn w-50 fw-bold add_to_cart_btn" id="{{product_data.slug}}" style="background-color: #159015;height:8%;letter-spacing:8px;color:white" >
+                           Add to bag 
+                           <i class="fa-solid fa-plus"></i>
+                        </button>
+                     </span>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   {% include "components/alert.html" %}
+{% endblock content %}

@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+<section class="vh-100">
+    <div class="container py-5 h-100 w-75">
+        <div class="d-flex flex-column flex-wrap">
+            <div class="create-order-loading">
+                <img src="{% static 'loading_spinner.png' %}">
+            </div>
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-8 p-3">
+                        <div class="d-flex " style="justify-content: space-between;">
+                            <h4 class="text-muted font-weight-bold">ADDRESS</h4>
+                            <button class="btn btn-primary">ADD</button>
+                        </div>
+                        <div class="address-block my-3">
+                        {% for address in data %}
+                            <div class="d-flex my-2">
+                                <div class="col-1 text-center" style="top:15">
+                                <input type="radio" class="form-check-input" name="address-radio" value="{{address.pk}}" checked/>
+                            </div>
+                            <div class="col-11 p-3" style="box-shadow: 0px 0px 5px 0px #b8b8b8;border-radius:5px">
+                                <div class="address">
+                                    <span>{{address.address}},</span>
+                                    <span class="landmark">{{address.landmark}},</span>
+                                    <span>{{address.area}},</span>
+                                    <span>{{address.state}},</span>
+                                    <span>{{address.country}}</span>
+                                    <span>({{address.pincode}})</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="address-not-found-block.">
+                            <h5>
+                                No Address Found.
+                            </h5>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-4 p-3 my-2" style="box-shadow: 0px 0px 5px 0px #b8b8b8;border-radius:5px;background-color: #f0f0f0;">
+                    <div class="payment-block">
+                        <h5 class="text-dark font-weight-bold">PAYMENT</h5>
+                        <hr/>
+                        <div class="input-group form-inline my-4">
+                            <input type="text" class="form-control border-bottom" placeholder="Enter promocode" style="border:0"/>
+                            <button class="btn fw-bold text-light" style="
+                            border-radius: 5px;background-color: #2b3e54;
+                            ">
+                            APPLY
+                            </button>
+                        </div>
+                        <div class="d-flex my-2" style="justify-content: space-between;">
+                            <div class="amt-title">
+                                Amount:
+                            </div>
+                            <div class="amt">
+                                Rs. {{cart_total}}
+                            </div>
+                        </div>
+                        <div class="d-flex my-2" style="justify-content: space-between;">
+                            <div class="shipping-title">
+                                Shipping Amount:
+                            </div>
+                            <div class="shipping text-success">
+                                Rs. 0
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="d-flex my-2" style="justify-content: space-between;">
+                            <div class="shipping-title">
+                                Total:
+                            </div>
+                            <div class="shipping">
+                                Rs. {{cart_total}}
+                            </div>
+                        </div>
+                        <div class="checkout-btn mt-3">
+                            <button class="btn w-100 btn-warning" id="checkout_btn" onclick="create_order()">
+                                Checkout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
