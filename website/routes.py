@@ -2,15 +2,14 @@ from django.contrib import admin
 from django.urls import path,include
 from website.views import (
     # index,
-    home,
-    loginForm,
-    signupForm,
-    handleLogin,
-    handleSignup,
     Cart,
+    Checkout,
+    Login,
+    Signup,
     checkout_page,
     cart_page,
-    Checkout
+    home,
+    Logout
 )
 
 from website.components import (
@@ -21,18 +20,18 @@ from website.components import (
 )
 
 
+app_name = 'website'
 urlpatterns = [
     path('',home,name="Default"),
     # path('index/', index, name="index"),
-    path('login/', loginForm, name="loginForm"),
-    path('sign-up/', signupForm, name="signupForm"),
-    path('handle-login/', handleLogin, name="handleLogin"),
-    path("handle-sign-up/", handleSignup, name="handleSignup"),
+    path('login/', Login.as_view(), name="login"),
+    path('sign-up/', Signup.as_view(), name="Signup"),
     path('add-to-cart/', Cart.as_view(), name="AddToCart"),
     path('cart/', cart_page, name="cart-page"),
     path('checkout-page/',checkout_page,name="checkout-page"),
     path("checkout/",Checkout.as_view(),name="Checkout"),
-    
+    path("logout/",Logout,name="logout"),
+
     path("Occasion/<slug:occasion_no>",OccasionView.as_view(),name="Occasion-Products"),
     path("Detail/<slug:product_slug>",DetailsView.as_view(),name="Product-Detail"),
     path("increase_qty/",Increase_Qty,name="Increase_Qty"),

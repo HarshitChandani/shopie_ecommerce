@@ -1,33 +1,35 @@
    {% extends 'layout.html' %}
 
    {% block content %}
-
-   <div class="login-div m-5 p-3" style="border:1px solid lightgrey;border-radius:5px">
-      <div class="text-center"><h3>SignUp</h5></div>
-      <form method="POST" action="{% url 'handleSignup' %}">
-      {% csrf_token %}
-      <div class="mb-3">
-         <label for="first_name" class="form-label">First Name<span style="color:red">*</span></label>
-         <input type="text" class="form-control" id="first_name" name="first_name" aria-describedby="first_nameHelp">
+   <div class="d-flex justify-content-center">
+      <div class="signup-div m-5 p-3 w-25" style="box-shadow: 0px 0px 7px #ececec;">
+         <h5 class="fw-bold mb-3 pb-3" style="letter-spacing: 1px;">SIGN-UP</h5>
+         <form method="POST" class="my-4" action="{% url 'website:Signup' %}">
+         {% csrf_token %}
+            <div class="mb-3">
+               <label for="first_name" class="form-label">First Name<span style="color:red">*</span></label>
+               <input type="text" class="form-control w-100" id="first_name" name="first_name" aria-describedby="first_nameHelp" required>
+            </div>
+            <div class="mb-3">
+               <label for="last_name" class="form-label">Last Name<span style="color:red">*</span></label>
+               <input type="text" class="form-control w-100" id="last_name" name="last_name" aria-describedby="last_nameHelp" required>
+            </div>
+            <div class="mb-3">
+               <label for="username" class="form-label">Email<span style="color:red">*</span></label>
+               <input type="email" class="form-control" id="username" name="username" aria-describedby="emailHelp" required>
+            </div>
+            <div class="mb-3">
+               <label for="password" class="form-label">Password<span style="color:red">*</span></label>
+               <input type="password" class="form-control" id="password" name="password" required>
+            </div>  
+            <div class="mb-3 pt-1">        
+               <button type="submit" class="btn btn-dark w-100 btn-block button">Submit</button>
+            </div>
+         </form>
+         <div>
+            Already have Account? <a href="{% url 'website:login' %}" role="button" class="text-dark fw-bold">LOGIN</a>
+         </div>
       </div>
-      <div class="mb-3">
-         <label for="last_name" class="form-label">Last Name<span style="color:red">*</span></label>
-         <input type="text" class="form-control" id="last_name" name="last_name" aria-describedby="last_nameHelp">
-      </div>
-      <div class="mb-3">
-         <label for="username" class="form-label">Email<span style="color:red">*</span></label>
-         <input type="email" class="form-control" id="username" name="username" aria-describedby="emailHelp">
-      </div>
-      <div class="mb-3">
-         <label for="password" class="form-label">Password<span style="color:red">*</span></label>
-         <input type="password" class="form-control" id="password" name="password">
-      </div>          
-      <button type="submit" class="btn btn-success float-left">Submit</button>
-      <div class="my-3">
-         <span>Already have an account <a href="{% url 'loginForm' %}">Login</a></span>
-      </div>
-      </form>
    </div>
-
 
    {% endblock content %}

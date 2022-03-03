@@ -130,27 +130,33 @@
    function create_order(){
       address_selected = $("input[name='address-radio']:checked").val()
       csrfToken = $("input[name=csrfmiddlewaretoken]").val();
-      $(".create-order-loading").css("visibility","visible");
-      $("#checkout_btn").attr("disabled", true);
-      $.ajax({
-         url : '/checkout/',
-         method:"POST",
-         data:{
-            address_id: address_selected
-         },
-         headers: {
-            'X-CSRFToken':csrfToken
-         },
-         success: (data)=>{
-            if (data.order_placed){
-               $(".create-order-loading").css("visibility","hidden");
-               alert("Your order has been placed.")
-               window.location.href = 'http://127.0.0.1:8000/'
+      if (!address_selected){
+         alert("Please Select Address.")
+      }
+      else{
+         $(".create-order-loading").css("visibility","visible");
+         $("#checkout_btn").attr("disabled", true);
+         $.ajax({
+            url : '/checkout/',
+            method:"POST",
+            data:{
+               address_id: address_selected
+            },
+            headers: {
+               'X-CSRFToken':csrfToken
+            },
+            success: (data)=>{
+               if (data.order_placed){
+                  $(".create-order-loading").css("visibility","hidden");
+                  alert("Your order has been placed.")
+                  window.location.href = 'http://127.0.0.1:8000/'
+               }
+               else{
+                  console.log("Invalid.")
+                  alert("Invalid")
+               }
             }
-            else{
-               console.log("Invalid.")
-               alert("Invalid")
-            }
-         }
-      })
+         })
+      }
+      
    }

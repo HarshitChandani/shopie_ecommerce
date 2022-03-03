@@ -3,7 +3,7 @@
       <!-- Left elements -->
       <div class="d-flex">
         <!-- Brand -->
-        <a class="navbar-brand mb-1 d-flex align-items-center" href="{% url 'Default' %}" style="margin-right:0 !important;padding:20px">
+        <a class="navbar-brand mb-1 d-flex align-items-center" href="{% url 'website:Default' %}" style="margin-right:0 !important;padding:20px">
           <img
             src="/static/images/logo.jpg"
             height="55"
@@ -24,7 +24,7 @@
          <a class="nav-link" href="#">
             <div class="occasions-navbar-section primary-color">
                {% for data in occasion_data %}
-                  <a href="{% url 'Occasion-Products' data.slug%}" class="primary-color" style="text-decoration:none;">|{{data.title}}|</a>
+                  <a href="{% url 'website:Occasion-Products' data.slug%}" class="primary-color" style="text-decoration:none;">|{{data.title}}|</a>
                {% endfor %}
             </div>
          </a>
@@ -36,35 +36,34 @@
   
       <!-- Right elements -->
       <ul class="navbar-nav flex-row">
-         <li class="nav-item dropdown me-3 me-lg-1" >
-            <a
-              class="nav-link dropdown-toggle hidden-arrow"
-              href="#"
-              id="navbarDropdownMenuLink"
-              role="button"
-              data-mdb-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <i class="fas fa-bell fa-lg" style="color:#2b3e54;"></i>
-              <span class="badge rounded-pill badge-notification bg-danger" id="notifications">12</span>
+         <li class="nav-item me-3 me-lg-1 dropdown">
+            <a class = "nav-link dropdown-toggle hidden-arrow" href="#" id="userDropDownMenu" role="button" data-mdb-toggle="dropdown" aria-expanded="false">  
+               {% if user.is_authenticated %}
+                  <i class="fa-solid fa-user fa-lg" style="color:#00b74a"></i>
+               {% else %}
+               <i class="fa-solid fa-user fa-lg" style="color:#dc1313"></i>
+               {% endif %}
             </a>
-           </li>
-            <li class="nav-item me-3 me-lg-1" style="margin-top:6px">
-               <a href="javascript:void(0)" data-mdb-toggle="modal" data-mdb-target="#cartModel" title="Cart">
-                  <i class="fa-solid fa-cart-shopping fa-lg"  style="color:#2b3e54" > </i>
-                  <span class="badge rounded-pill badge-notification bg-danger " id="cart-total-items">0</span>
-               </a>
-               
-            </li>
-            <li class="nav-item me-3 me-lg-1">
-               <a class="nav-link" 
-               data-mdb-toggle="tooltip" role="button"
-               data-mdb-placement="bottom" title="Login"
-               href="{% url 'loginForm' %}">
-               <i class="fa-solid fa-user fa-lg" style="color:#2b3e54"></i>
-               </a>
-            </li>
-            
+            <ul class="dropdown-menu dropdown-menu-right text-center" ara-labelledby="userDropDownMenu ">
+               {% if user.is_authenticated %}
+                  <li>
+                     <a class="dropdown-item" href="{% url 'website:logout' %}">Logout</a>
+                     <a class="dropdown-item" href="#">Orders</a>
+                  </li>
+               {% else %}
+                  <li>
+                     <a class="dropdown-item" href="{% url 'website:login' %}">Login</a>
+                     <a class="dropdown-item" href="{% url 'website:Signup' %}">Register</a>
+                  </li>
+               {% endif %}
+            </ul>
+         </li>
+         <li class="nav-item me-3 me-lg-1" style="margin-top:6px">
+            <a href="javascript:void(0)" data-mdb-toggle="modal" data-mdb-target="#cartModel" title="Cart">
+               <i class="fa-solid fa-cart-shopping fa-lg"  style="color:#2b3e54" > </i>
+               <span class="badge rounded-pill badge-notification bg-danger " id="cart-total-items">0</span>
+            </a>
+         </li>   
       </ul>
       <!-- Right elements -->
     </div>

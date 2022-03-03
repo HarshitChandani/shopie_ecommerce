@@ -60,17 +60,26 @@
                      <span class="text-dark">{{product_data.occasion_id.title | capfirst}}</span>
                   </div>
                   <div class="main-function-block mt-2">
-                     <span class="add-to-cart-btn">
-                        <button class="btn w-50 fw-bold add_to_cart_btn" id="{{product_data.slug}}" style="background-color: #159015;height:8%;letter-spacing:8px;color:white" >
+                     {% if not product_data.is_out_of_stock %}
+                        <span class="add-to-cart-btn">
+                           <button class="btn w-50 fw-bold add_to_cart_btn" id="{{product_data.slug}}" style="background-color: #159015;height:8%;letter-spacing:8px;color:white" >
                            Add to bag 
                            <i class="fa-solid fa-plus"></i>
+                           </button>
+                        </span>
+                     {% else %}
+                     <span class="out-of-stock-btn">
+                        <button class="btn w-50 fw-bold" style="height:8%;letter-spacing:8px;color:white;background-color: #d42929;" >
+                        Out Of stock
+                        <i class="fa-solid fa-plus"></i>
                         </button>
                      </span>
+                     {% endif %}
+                     
                   </div>
                </div>
             </div>
          </div>
       </div>
    </div>
-   {% include "components/alert.html" %}
 {% endblock content %}

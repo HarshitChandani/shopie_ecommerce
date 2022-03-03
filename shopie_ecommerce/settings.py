@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -131,6 +132,15 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# LOGIN_REDIRECT_URL = '/Checkout'
-# LOGIN_URL = 'login/'
-# LOGIN_REDIRECT_URL = '/checkout/'
+LOGIN_URL='/login/'
+LOGIN_REDIRECT_URL = ''
+
+
+#manually added
+MESSAGE_TAGS = {
+     messages.SUCCESS : 'alert-success',
+     messages.DEBUG : 'alert-secondar',
+     messages.ERROR: 'alert-danger',
+     messages.WARNING :'alert-warning',
+     messages.INFO :'alert-info'
+}

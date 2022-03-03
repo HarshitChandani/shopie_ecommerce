@@ -189,7 +189,7 @@ class Orders(models.Model):
     order_date = models.DateTimeField(null=True)
     order_confirm = models.BooleanField(default=True)
     order_received = models.BooleanField(default=False)
-
+    order_cancelled = models.BooleanField(default=False)
     # one order can have multiple items
     order_detail = models.ManyToManyField(Product_OrderDetails)
     shipping_address = models.ForeignKey(Shipping_Address,on_delete=models.SET_NULL,null=True)

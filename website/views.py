@@ -1,10 +1,14 @@
 from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.views.generic import View
+from django.contrib import messages
 import json
 from datetime import datetime
+
 from .models import (
     Product as ProductModel,
     Occasion as OccasionModel ,
@@ -39,66 +43,64 @@ def home(request):
 #     }
 #     return render(request, "index.html", context)
 
-
-def loginForm(request):
-    return render(request, "login.html")
-
-def signupForm(request):
-    return render(request, "signup.html")
-
 def cart_page(request):
     return render(request, "cart.html")
 
+# LOGIN
+class Login(View):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("Default")
+        return render(request,"login.html")
 
-def handleLogin(request):
-    if "user-id" in request.session and request.session["user-status"] is "login":
-        # user is already logged in
-        return HttpResponse("Already logged in.")
-    else:
-        # user is logging in
-        if request.method == "POST":
+    def post(self, request, *args, **kwargs):
+        try:
             loginUsername, loginPassword = request.POST['username'], request.POST['password']
+            validate_email(loginUsername)
+        except ValidationError:
+            messages.error(request,"Email Format is not correct.")
+        else:
             user = authenticate(username=loginUsername, password=loginPassword)
             if user is not None:
                 login(request, user)
-                user_id = User.objects.filter(username=loginUsername, email=loginUsername).values("id")[0]["id"]
-                request.session["user-id"] = user_id
-                request.session["user-status"] = "login"
-
-                return render(request, "default", {'logged_in': True})
+                if request.POST["next"] != "":
+                    return redirect(request.POST["next"])
+                else:
+                    return redirect('website:Default')
             else:
-                return HttpResponse("Check your credentials.")
-        else:
-            error_message = "<div class={}><h3>Invalid Credentials</h3><h4>Request Cancelled</h4>></div>".format(
-                'text-center')
-            return HttpResponse(error_message)
+                messages.error(request,"Invalid Credentials")
+                return redirect("website:login")
+        
 
+class Signup(View):
+    def get(self, request, *args, **kwargs):
+        return render(request,"signup.html")
 
-def handleSignup(request):
-    if request.method == "POST":
-        newUserFirst_name, newUserLast_name, newUserUsername, newUserEmail, newUserPassword = request.POST[
-                                                                                                  'first_name'], \
-                                                                                              request.POST['last_name'], \
-                                                                                              request.POST['username'], \
-                                                                                              request.POST['username'], \
-                                                                                              request.POST['password']
+    def post(self, request, *args, **kwargs):
+        newUserFirst_name, newUserLast_name, newUserUsername, newUserEmail, newUserPassword = request.POST['first_name'], \
+                            request.POST['last_name'], \
+                            request.POST['username'], \
+                            request.POST['username'], \
+                            request.POST['password']
         print(request.POST.values())
         if (User.objects.filter(username=newUserUsername).exists()):
             pass
         else:
-            newUserObj = User.objects.create(first_name=newUserFirst_name, last_name=newUserLast_name,
-                                             username=newUserUsername, email=newUserEmail, password=newUserPassword,
-                                             is_active=True, is_staff=False)
+            newUserObj = User.objects.create(
+                first_name=newUserFirst_name, 
+                last_name=newUserLast_name,
+                username=newUserUsername, 
+                email=newUserEmail, 
+                password=newUserPassword,
+                is_active=True, 
+                is_staff=False)
             newUserObj.save()
-            return redirect('loginForm')
-    else:
-        error_message = "<div class={}><h3>Invalid Credentials</h3><h4>Request Cancelled</h4>></div>".format(
-            'text-center')
-        return HttpResponse(error_message)
+            return redirect('website:login')
 
-
-
-
+def Logout(request):
+    if request.user.is_authenticated:
+        logout(request)
+        return redirect("website:Default")
 
 #CART
 class Cart(View):
@@ -144,22 +146,18 @@ class Cart(View):
     
 
 
-@login_required(login_url='/login/')
+@login_required(redirect_field_name="next")
 def checkout_page(request):
-    if request.user.is_authenticated:
-        if "cart_items" in request.session:
-            print("User is Logged in and also has items in cart. ")
-            shipping_address_obj = ShippingAddressModel.objects.filter(user_id=request.user.id).all()
-            context = {
-                'data':shipping_address_obj,
-                'cart_total':request.session["cart_items"]["cart_total"]
-            }
-            return render(request,"checkout.html",context)
-        else:
-            return redirect('Default')
+    if request.user.is_authenticated and "cart_items" in request.session:
+        print("User is Logged in and also has items in cart.")
+        shipping_address_obj = ShippingAddressModel.objects.filter(user_id=request.user.id).all()
+        context = {
+            'data':shipping_address_obj,
+            'cart_total':request.session["cart_items"]["cart_total"]
+        }
+        return render(request,"checkout.html",context)
     else:
-        return HttpResponse("Invalid Credentials")
-
+        return redirect('website:Default')
 
 
 class Checkout(LoginRequiredMixin,View):
