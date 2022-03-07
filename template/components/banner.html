@@ -1,0 +1,35 @@
+    <!-- Swiper -->
+    {% load static %}
+<div class="swiper mySwiper">
+   <div class="swiper-wrapper">
+      <div class="swiper-slide">
+         <img src="{% static 'winter-banner.webp' %}" class="img-fluid" />
+      </div>
+      <div class="swiper-slide">
+         <img src="{% static '381-2021_09_30-WebBanner.webp' %}" class="img-fluid" />
+      </div>
+      <div class="swiper-slide">
+         <img src="{% static 'webBanner_1_2022.webp' %}" class="img-fluid" />
+      </div>
+   </div>
+   <div class="swiper-button-next"></div>
+   <div class="swiper-button-prev"></div>
+</div>
+<!-- Initialize Swiper -->
+<script>
+var swiper = new Swiper(".mySwiper", {
+   slidesPerView : 1,
+   loop: true,
+   spaceBetween: 30,
+   effect: "fade",
+   centeredSlides: true,
+   autoplay: {
+      delay: 2800,
+      disableOnInteraction: false,
+   },
+   navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+   },
+});
+</script>

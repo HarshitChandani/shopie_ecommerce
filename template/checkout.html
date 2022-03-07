@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <section class="vh-100">
-    <div class="container py-5 h-100 w-75">
+    <div class="container py-5 h-100" style="width: 60%;">
         <div class="d-flex flex-column flex-wrap">
             <div class="create-order-loading">
                 <img src="{% static 'loading_spinner.png' %}">
@@ -12,7 +12,7 @@
                     <div class="col-8 p-3">
                         <div class="d-flex " style="justify-content: space-between;">
                             <h4 class="text-muted font-weight-bold">ADDRESS</h4>
-                            <button class="btn btn-primary">ADD</button>
+                            <button class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#addressModal" >ADD</button>
                         </div>
                         <div class="address-block my-3">
                         {% for address in data %}
@@ -20,13 +20,13 @@
                                 <div class="col-1 text-center" style="top:15">
                                 <input type="radio" class="form-check-input" name="address-radio" value="{{address.pk}}" checked/>
                             </div>
-                            <div class="col-11 p-3" style="box-shadow: 0px 0px 5px 0px #b8b8b8;border-radius:5px">
+                            <div class="col-11 p-3" style="box-shadow: 0px 0px 5px 0px #b8b8b8;border-radius:5px;font-size:14px">
                                 <div class="address">
-                                    <span>{{address.address}},</span>
-                                    <span class="landmark">{{address.landmark}},</span>
-                                    <span>{{address.area}},</span>
-                                    <span>{{address.state}},</span>
-                                    <span>{{address.country}}</span>
+                                    <span>{{address.address | upper}},</span>
+                                    <span>{{address.landmark | upper }},</span>
+                                    <span>{{address.city | upper}},</span>
+                                    <span>{{address.state | upper}},</span>
+                                    <span>{{address.country | upper}}</span>
                                     <span>({{address.pincode}})</span>
                                 </div>
                             </div>
@@ -88,4 +88,5 @@
     </div>
 </section>
 
+{% include "components/address.html" %}
 {% endblock content %}

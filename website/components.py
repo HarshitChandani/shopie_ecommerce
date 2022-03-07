@@ -1,13 +1,21 @@
 from sqlite3 import OperationalError
+from webbrowser import get
 from django.shortcuts import render, redirect, HttpResponse,get_object_or_404
 import json
 from typing import Any
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from website.models import (
+   Orders,
    Product as ProductModel,
    Occasion as OccasionModel,
    Brand as BrandModel,
    Pattern as PatternModel,
-   ProductCategory as ProductCategoryModel
+   ProductCategory as ProductCategoryModel,
+   Shipping_Address as ShippingAddressModel,
+   Orders as OrdersModel,
+   Product_OrderDetails as ProductOrderDetailsModel
 )
 from django.views.generic import (
    View,
@@ -25,6 +33,28 @@ class OccasionView(ListView):
    def get_queryset(self):
       product_slug = self.kwargs.get("occasion_no",None)
       return ProductModel.objects.filter(occasion_id__slug=product_slug).only(
+         'lg_image','slug','title','fitting_type','selling_price','is_discount_applicable','MRP','discount_percent'
+      )
+
+
+class ProductCategoryView(ListView):
+   context_object_name = "product_data"
+   template_name = "index.html"
+
+   def get_queryset(self):
+      slug = self.kwargs.get("category_no",None)
+      return ProductModel.objects.filter(category_id__slug=slug).only(
+         'lg_image','slug','title','fitting_type','selling_price','is_discount_applicable','MRP','discount_percent'
+      ).order_by("pk")
+
+
+class BrandView(ListView):
+   context_object_name = "product_data"
+   template_name = "index.html"
+   
+   def get_queryset(self):
+      slug = self.kwargs.get("brand_no")
+      return ProductModel.objects.filter(brand_id__slug = slug).only(
          'lg_image','slug','title','fitting_type','selling_price','is_discount_applicable','MRP','discount_percent'
       )
 
@@ -52,13 +82,6 @@ class DetailsView(DetailView):
       # Both above are same But Class based view more readable.
 
 
-#BRAND
-class BrandView(DetailView):
-   model = BrandModel
-   context_object_name = "brands_data"
-   template_name = "home.html"
-
-
 #CART
 def count_cart(request):
    '''
@@ -66,15 +89,15 @@ def count_cart(request):
         @request: request object
         @return: the count i.e; the sum of total items inside cart-items session key.
     '''
-   get_count = (
-      int(value["user_purchased_qty"])
-      for value in request.session["cart_items"].values()
-      if not isinstance(value,int)
-   )
-   return sum(get_count)
-
-
-#CART
+   try:
+      get_count = (
+         int(value["user_purchased_qty"])
+         for value in request.session["cart_items"].values()
+         if not isinstance(value,int)
+      )
+      return sum(get_count)
+   except KeyError:
+      return 0
 
 
 #CART
@@ -217,3 +240,64 @@ def decrease_qty(request):
          'reason':'Invalid Request.'
       }
    return HttpResponse(json.dumps(json_data),content_type="application/json")
+
+# Address
+@login_required
+def add_address(request):
+   if request.method == "GET":
+      return redirect("website:checkout-page")
+
+   if request.method == "POST":
+      address = request.POST.get("address")
+      pincode = request.POST.get("pincode")
+      state = request.POST.get("state")
+      city = request.POST.get("city")
+      landmark = request.POST.get("landmark")
+      country = "India"
+      addressObj = ShippingAddressModel.objects.create(
+         address = address, 
+         landmark = landmark,
+         city = city,
+         pincode=pincode, 
+         state = state,
+         country = country,
+         user_id = request.user,
+         is_active = False
+      )
+      addressObj.save()
+      return redirect("website:checkout-page")
+
+# ORDER
+def cancel_order(request,order_no):
+   if request.method == "GET":
+         try:
+            order_slug = order_no           
+            product_items_list = list()
+            get_order_details = get_object_or_404(OrdersModel,slug = order_slug)
+            order_key = get_order_details.order_key
+            get_order_items_details = ProductOrderDetailsModel.objects.filter(
+               order_key = order_key
+            ).all()
+
+            for product in get_order_items_details:
+               get_product = get_object_or_404(ProductModel,pk = product.product_id.id)
+               get_product.available_qty = get_product.available_qty + product.ordered_qty
+               get_product.sold_qty = get_product.sold_qty - product.ordered_qty
+
+               product_items_list.append(get_product)
+            
+            ProductModel.objects.bulk_update(product_items_list,['available_qty','sold_qty'])
+
+            update_order_data = OrdersModel.objects.filter(order_key = order_key).update(
+               order_confirm = False,
+               order_received = False,
+               order_cancelled = True
+            )
+            
+            messages.success(request,"Order has been cancelled")
+            return redirect("website:order-summary")
+         except ObjectDoesNotExist:
+            print("No data found.")
+
+def order_invoice(request):
+   pass

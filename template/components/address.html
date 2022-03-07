@@ -1,0 +1,50 @@
+<div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressModal" aria-hidden="true">
+   <div class="modal-dialog modal-lg">
+     <div class="modal-content">
+      <div class="modal-header">
+         <h5 class="modal-title" id="addressModalLabel">Add Address</h5>
+         <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{% url 'website:add_address' %}">
+         {% csrf_token %}
+         <div class="modal-body">
+            <div class="form-outline">
+               <textarea class="form-control form-control-lg rounded border-bottom" rows="2" id="address" name="address" required></textarea>
+               <label class="form-label text-muted">Address</label>
+            </div>
+            <div class="form-outline my-4">
+               <div class="d-flex flex-column">
+                  <div class="row">
+                     <div class="col-lg-6">
+                        <input type="text" class="form-control form-control-lg rounded border-bottom" name="landmark" id="landmark" required/>
+                        <label class="form-label text-muted">Landmark</label>
+                     </div>
+                     <div class="col-6">
+                        <input type="text" class="form-control form-control-lg rounded border-bottom" name="pincode" id="pincode" required/>
+                        <label class="form-label text-muted">Pincode</label>
+                     </div>
+                  </div>
+               </div>
+               <div class="form-outline form-inline my-4">
+                  <div class="row">
+                     <div class="col">
+                        <input type="text" class="form-control form-control-lg rounded border-bottom" name="city" id="city" required/>
+                        <label class="form-label text-muted">City</label>
+                     </div>
+                     <div class="col">
+                        <input type="text" class="form-control form-control-lg rounded border-bottom" name="state" id="state" required/>
+                        <label class="form-label text-muted">State</label>
+                     </div>
+                     <div class="col">
+                        <input type="text" class="form-control form-control-lg rounded border-bottom" name="country" id="country" disabled value="India"/>
+                     </div>
+                  </div>
+            </div>
+         </div>
+         <div class="modal-footer">
+            <input type="submit" class="btn btn-secondary"/>
+         </div>
+      </form>
+     </div>
+   </div>
+ </div>

@@ -4,46 +4,47 @@
       {% block content %}
       
          <div class="container">
-            <div class="wrapper p-1 m-2">
+            <div class="wrapper p-1 mx-2 ">
+               <div class="total-products my-3">
+                  <h5 class="text-dark">Total: <span class="text-muted" style="font-size:18px">{{product_data.count }} items</span></h5> 
+               </div>
                <div class="d-flex flex-wrap align-items-center">
-                     {% if product_data %}
-                        {% for  data in  product_data %}
-                           <div class=" m-2 card" style="width:20rem; box-shadow: 0px 0px 6px 0px #c5c6c6">
-                              <div class="card-body text-center p-1">
-                                 <div class="text-center bg-image hover-zoom">
-                                    <a href="{% url 'website:Product-Detail' data.slug %}">
-                                       <img src="{{data.lg_image}}" class=" card-img-top w-75 img-fluid"  alt="..." style="height:380px;">
-                                    </a>
-                                    <span class="badge badge-light wishList-heart" style="cursor:pointer">
-                                       <i class="fa-solid fa-heart fa-lg" title="Wishlist" id="{{data.slug}}" onclick="add_to_wishlist('{{data.slug}}')">
-                                       </i>
-                                    </span>
-                                 </div>
-                                 <div class="card-title product-display-name m-0 " style="font-size: medium;">
-                                    {{data.title}} ({{data.fitting_type}})
-                                 </div>
-                                 <div class="product-display-price my-2">
-                                    <span class="SP mx-1">
-                                       ₹ {{data.selling_price}}
-                                    </span>
-                                    {% if data.is_discount_applicable %}
-                                    
-                                       <span class="MRP text-muted mx-1">
-                                          <del>₹ {{data.MRP}}</del>
-                                       </span>
-                                       <span class="discount-percent mx-1 text-danger">
-                                          {{data.discount_percent}}% OFF
-                                       </span>
-                                    {% endif %}
-                                 </div> 
+                     {% for  data in  product_data %}
+                        <div class=" m-1 card" style="width:19rem; box-shadow: 0px 0px 6px 0px #c5c6c6">
+                           <div class="card-body text-center p-1">
+                              <div class="text-center bg-image hover-zoom">
+                                 <a href="{% url 'website:Product-Detail' data.slug %}">
+                                    <img src="{{data.lg_image}}" class=" card-img-top w-75 img-fluid"  alt="..." style="height:380px;">
+                                 </a>
+                                 <span class="badge badge-light wishList-heart" style="cursor:pointer">
+                                    <i class="fa-solid fa-heart fa-lg" title="Wishlist" id="{{data.slug}}" onclick="add_to_wishlist('{{data.slug}}')">
+                                    </i>
+                                 </span>
                               </div>
+                              <div class="card-title product-display-name m-0 " style="font-size: medium;">
+                                 {{data.title}} ({{data.fitting_type}})
+                              </div>
+                              <div class="product-display-price my-2">
+                                 <span class="SP mx-1">
+                                    ₹ {{data.selling_price}}
+                                 </span>
+                                 {% if data.is_discount_applicable %}
+                                 
+                                    <span class="MRP text-muted mx-1">
+                                       <del>₹ {{data.MRP}}</del>
+                                    </span>
+                                    <span class="discount-percent mx-1 text-danger">
+                                       {{data.discount_percent}}% OFF
+                                    </span>
+                                 {% endif %}
+                              </div> 
                            </div>
-                        {% endfor %}
-                     {% else %}
-                           <div class="no-item-found-display">
-                              0 item found.
-                           </div>
-                     {% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="no-item-found-display text-center  m-0">
+                           <img src="{% static 'no-items.png' %}" height=300/>
+                        </div>
+                     {% endfor %}
                </div>
             </div>
             

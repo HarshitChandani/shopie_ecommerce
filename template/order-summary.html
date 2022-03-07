@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+{% block content %}
+<div class="container w-100 my-5 p-3">
+   <div class="d-flex flex-column justify-content-center rounded">
+      <h3 class="text-muted">
+         Manage your orders 
+         <span> <img src="{% static 'order.png' %}" height="35"></span>
+         {% if messages %}
+            {% for message in messages %}
+               <span class="{{message.tags}}" style="font-size:medium;float:right">{{message | upper}}</span>
+            {% endfor %}
+         {% endif %}
+      </h3>
+      <div class="orders-block my-3 table-responsive-xl">
+         <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" class="fw-bold"><h4>Order No.</h4></th>
+                <th scope="col" class="fw-bold"><h4>Date</h4></th>
+                <th scope="col" class="fw-bold"><h4>Cancel</h4></th>
+                <th scope="col" class="fw-bold"><h4>Status</h4></th>
+                <th scope="col" class="fw-bold"><h4>Total</h4></th>
+              </tr>
+            </thead>
+            <tbody>
+               {% for data in  orders %}
+               <tr>
+                  <th scope="row" >
+                     <a href="#">{{ data.get_items.get.order_key | upper }}</a>
+                  </th>
+                  <td>{{ data.order_date }}</td>
+                  <td>
+                     {% if not data.order_cancelled and not data.order_received %}
+                        <a href="{% url 'website:cancel-order' data.slug%}" role="button" class="btn btn-danger">Cancel</a>
+                     {% else %}
+                        --
+                     {% endif %}
+                  </td>
+                  <td>
+                     {% if data.order_received %}
+                        Received
+                     {% endif %}
+                     {% if data.order_cancelled %}
+                        Cancelled
+                     {% endif %}
+                  </td>
+                  <td>Rs. {{ data.net_amt }}</td>
+                  <td>
+                     <a href="{% url 'website:invoice' data.slug %}" role="button" class="btn">Invoice</a>
+                  </td>  
+               </tr>
+               {% empty %}
+
+              {% endfor %}
+            </tbody>
+          </table>
+      </div>
+   </div>
+</div>
+{% endblock content %}

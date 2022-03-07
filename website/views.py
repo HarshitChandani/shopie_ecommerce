@@ -2,11 +2,12 @@ from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError,ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.views.generic import View
 from django.contrib import messages
 import json
+# import Exception
 from datetime import datetime
 
 from .models import (
@@ -14,6 +15,8 @@ from .models import (
     Occasion as OccasionModel ,
     Product_OrderDetails as Product_OrderDetailsModel,
     Orders as OrdersModel,
+    Brand as BrandModel,
+    ProductCategory as ProductCategoryModel,
     Shipping_Address as ShippingAddressModel
 )
 from .components import (
@@ -27,30 +30,33 @@ from django.shortcuts import (
     HttpResponse,
     get_object_or_404
 )
+from django.views.generic import (
+   View,
+   ListView,
+   DetailView
+)
 
-def home(request):
-    occasion_data = OccasionModel.objects.only("slug","title").order_by("id")
-    return render(request,"home.html",{'occasion_data':occasion_data})
+# DEFAULT
+class Home(ListView):
+    context_object_name = "brand_data"
+    template_name = 'home.html'
+    model = BrandModel
 
-      
-# def index(request):
-#     '''
-#        Default Method to list all items
-#     '''
-#
-#     context = {
-#         'data': ProductModel.objects.all()
-#     }
-#     return render(request, "index.html", context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["category_data"] =  ProductCategoryModel.objects.all().order_by('pk')[:3]
+        return context
+    
 
+# CART
 def cart_page(request):
     return render(request, "cart.html")
 
-# LOGIN
+# LOGIN / SIGNUP
 class Login(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect("Default")
+            return redirect("website:Default")
         return render(request,"login.html")
 
     def post(self, request, *args, **kwargs):
@@ -71,32 +77,36 @@ class Login(View):
                 messages.error(request,"Invalid Credentials")
                 return redirect("website:login")
         
-
+# LOGIN / SIGNUP
 class Signup(View):
     def get(self, request, *args, **kwargs):
         return render(request,"signup.html")
 
     def post(self, request, *args, **kwargs):
-        newUserFirst_name, newUserLast_name, newUserUsername, newUserEmail, newUserPassword = request.POST['first_name'], \
-                            request.POST['last_name'], \
-                            request.POST['username'], \
-                            request.POST['username'], \
-                            request.POST['password']
-        print(request.POST.values())
-        if (User.objects.filter(username=newUserUsername).exists()):
-            pass
+        try:
+            f_name,l_name,username,email,password = request.POST.get('first_name'),request.POST.get('last_name'),request.POST.get('username'),request.POST.get('username'),request.POST.get('password')
+            validate_email(email)
+        except ValidationError:
+            messages.error(request,"Email Format is not correct.")
         else:
-            newUserObj = User.objects.create(
-                first_name=newUserFirst_name, 
-                last_name=newUserLast_name,
-                username=newUserUsername, 
-                email=newUserEmail, 
-                password=newUserPassword,
-                is_active=True, 
-                is_staff=False)
-            newUserObj.save()
-            return redirect('website:login')
+            if (User.objects.filter(username=username).exists()):
+                messages.error(request,"User already exists.")
+                return redirect("website:Signup")
+            else:
+                new_user = User.objects.create(
+                    first_name=f_name.capitalize(), 
+                    last_name=l_name.lower(),
+                    username=username, 
+                    email=email, 
+                    password=password,
+                    is_active=True, 
+                    is_staff=False
+                )
+                new_user.save()
+                messages.success(request,"Hello, {} {}. Kindly login.".format(f_name.capitalize(),l_name.lower()))
+                return redirect('website:login')
 
+# LOGIN / SIGNUP
 def Logout(request):
     if request.user.is_authenticated:
         logout(request)
@@ -108,7 +118,8 @@ class Cart(View):
     def get(self,request):
         # count cart items 
         return HttpResponse(count_cart(request))
-
+        
+        
     def post(self, request):
         slug = request.POST["product_slug"]
         user_selected_product_size = request.POST["user_selected_size"]
@@ -137,16 +148,23 @@ class Cart(View):
             }
             request.session["modified"]=True
         else:
-            if (update_qty(request,slug,True,False)):
-                request.session["modified"]=True
+            available_qty_in_cart = request.session["cart_items"][slug]["available_qty"]
+            sold_qty_in_cart = request.session["cart_items"][slug]["sold_qty"] 
+            if request.session["cart_items"][slug]["available_qty"] != 0:
+                request.session["cart_items"][slug]["available_qty"] = available_qty_in_cart - 1  
+                request.session["cart_items"][slug]["sold_qty"] = sold_qty_in_cart +1
+                if (update_qty(request,slug,True,False)):
+                    request.session["modified"]=True
+            else:
+                request.session["modified"]=False        
 
         request.session["cart_items"]["cart_total"] = count_cart_total(request)
         request.session.modified = True
         return HttpResponse(request.session["modified"])
     
 
-
-@login_required(redirect_field_name="next")
+# CHECKOUT
+@login_required
 def checkout_page(request):
     if request.user.is_authenticated and "cart_items" in request.session:
         print("User is Logged in and also has items in cart.")
@@ -159,7 +177,7 @@ def checkout_page(request):
     else:
         return redirect('website:Default')
 
-
+# CHECKOUT
 class Checkout(LoginRequiredMixin,View):
     def post(self, request):
         if "cart_items" in request.session and request.user.is_authenticated:
@@ -187,14 +205,13 @@ class Checkout(LoginRequiredMixin,View):
                         )
                     )
                     
-                
                     # Update Product Model
                     ProductModel.objects.filter(slug=item["product_slug"]).update(
                         sold_qty = item["sold_qty"],
                         available_qty = item["available_qty"],
                         is_out_of_stock = False if item["available_qty"] != 0 else True
                     )
-            # Product Model has been updated according to the new values.
+            # Product Model has been created according to the new values.
             Product_OrderDetailsModel.objects.bulk_create(ordered_items_list)
                     
                 # Create new record in Order Model                   
@@ -203,6 +220,7 @@ class Checkout(LoginRequiredMixin,View):
             ).all()
 
             order_total = (t.total for t in orders_detail_obj)
+            # print(*order_total)
             order_amt = sum(order_total)
             print("Order Amount: {}".format(order_amt))
         
@@ -222,11 +240,11 @@ class Checkout(LoginRequiredMixin,View):
                 order_date = datetime.now().date(),
                 shipping_address = user_shipping_address,
                 gross_amt = order_amt, 
+                user = request.user,
+                order_key = order_key,
                 shipping = 0
             )
             place_order.save()
-            
-            place_order.order_detail.add(*orders_detail_obj)
             
             print("Order placed.")
             print("Order Number: {order_no}".format(order_no=place_order.id))
@@ -244,4 +262,18 @@ class Checkout(LoginRequiredMixin,View):
                     'order_placed':False,
                 }
             ))
-        # return HttpResponse("Hello")
+
+@login_required
+def order_summary(request):
+    try:
+        orders = OrdersModel.objects.filter(
+            user = request.user
+        ).all()
+        context = {
+            'orders':orders
+        }
+        print(orders)
+        return render(request,"order-summary.html",context)
+    except ObjectDoesNotExist:
+        print("No order has been placed yet.")
+    

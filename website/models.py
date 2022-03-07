@@ -3,6 +3,7 @@ from django.utils.text import slugify
 from django.core.validators import validate_comma_separated_integer_list
 from datetime import datetime
 import uuid
+import os
 from django.conf import settings
 
 fabrics = [
@@ -13,6 +14,7 @@ fabrics = [
     ('Silk', "Silk"),
     ('Denim', "Denim")
 ]
+
 sleeve_type = [
     ('Full-sleeve', "Full Sleeve"),
     ('Half-sleeve', "Half Sleeve"),
@@ -42,16 +44,29 @@ categorys = [
     ('Joggers', "Joggers"),
     ('Jogger_cargo', "JoggerCargo"),
     ("Cargo", "Cargo"),
-    ("Lycra_pants", "Lycra Pants")
+    ("Lycra_pants", "Lycra Pants"),
+    ('t-shirts',"T-Shirts"),
+    ('shirts','Shirts'),
 ]
 
+
+def path_and_rename(instance,filename):
+    upload_path = ''
+    '''
+        Ex: Filename: hello.png
+        filename.split('.')[-1] => ['hello','png']
+    '''
+    extension = filename.split(".")[-1]
+    obj = datetime.now() 
+    filename = "{}-{}-{}-{}:{}:{}.{}".format(obj.year,obj.month,obj.day,obj.hour,obj.minute,obj.second,extension)
+    return os.path.join(upload_path,filename)
 
 
 # Product Category Model
 class ProductCategory(models.Model):
     slug = models.CharField(max_length=255,default="a")
     title = models.CharField("Title", choices=categorys, max_length=100)
-    image = models.CharField(max_length=100)
+    image = models.ImageField(upload_to=path_and_rename,max_length=254)
 
     def __str__(self):
         return self.title
@@ -65,7 +80,7 @@ class ProductCategory(models.Model):
 class Occasion(models.Model):
     slug = models.SlugField(default="a",unique=True)
     title = models.CharField("Occasion Title",max_length=100,unique=True)
-    image = models.FileField()
+    image = models.FileField(upload_to=path_and_rename,max_length=254,null=True)
 
     def __str__(self):
         return self.title
@@ -81,7 +96,7 @@ class Brand(models.Model):
     title = models.CharField(max_length=100)
     slug = models.CharField(max_length=100,default="a",unique=True)
     label = models.TextField()
-    poster = models.TextField()
+    image = models.ImageField(upload_to=path_and_rename,max_length=254,null=True)
     total_products = models.IntegerField(default=0)
     products_type = models.CharField(max_length=100)
 
@@ -91,6 +106,7 @@ class Brand(models.Model):
 
     def __str__(self):
         return self.title
+
 
 # Pattern Models
 class Pattern(models.Model):
@@ -149,7 +165,7 @@ class Product(models.Model):
 class Shipping_Address(models.Model):
     address = models.TextField()
     landmark = models.TextField(null=True,blank=True)
-    area = models.CharField(max_length=255,null=True)
+    city = models.CharField(max_length=255,null=True)
     state = models.CharField(max_length=100,null=True)
     pincode = models.BigIntegerField()
     country = models.CharField(max_length=100,default="India",null=False)
@@ -169,9 +185,6 @@ class Product_OrderDetails(models.Model):
     discount = models.IntegerField("Discount",null=False,default=0)
     total = models.IntegerField("Total (SP * Qty)",null=False,default=0)
         
-    def __str__(self):
-        return self.order_key
-
     class Meta:
         verbose_name_plural = "Product_OrderDetails"
 
@@ -185,18 +198,18 @@ class Orders(models.Model):
             Net Amount: Gross Amount + Shipping 
     """
     #fields: 
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True)
     slug = models.SlugField(unique=True,default="a")
-    order_date = models.DateTimeField(null=True)
+    order_date = models.DateField(null=True)
     order_confirm = models.BooleanField(default=True)
     order_received = models.BooleanField(default=False)
     order_cancelled = models.BooleanField(default=False)
     # one order can have multiple items
-    order_detail = models.ManyToManyField(Product_OrderDetails)
+    order_key = models.CharField(max_length=255,null=True)
     shipping_address = models.ForeignKey(Shipping_Address,on_delete=models.SET_NULL,null=True)
-    gross_amt = models.FloatField("Gross Order Total",null=False,default=0)
+    gross_amt = models.FloatField("Gross Order Total",null=False,default=0.0)
     shipping = models.IntegerField("Shipping Charges",default=0,null=False)
     net_amt = models.FloatField("Net Order Total",null=False)
-
     
     def save(self, *args, **kwargs):
         self.slug = generateSlug()
@@ -206,11 +219,11 @@ class Orders(models.Model):
     def get_net_order_total(self):
         return (self.gross_amt + self.shipping)
     
-    def get_items(self):
-        return "," .join([str(item) for item in self.order_detail.all()])
     
     class Meta:
         verbose_name_plural = 'Orders'
 
 def generateSlug() -> models.SlugField:
         return slugify("{} {}".format(int(datetime.now().timestamp()),uuid.uuid4()))
+
+

@@ -3,7 +3,7 @@ body{
 }
 
 .button{
-   background-color: #f42d2a;
+   background-color: #F80C35;
    color: #FFF3CF;
    font-weight: bold;
 }
@@ -15,16 +15,12 @@ body{
    color:#058805
 }
 
-.primary-color{
-   color:#ec1411;
-}
-
 .border-radius{
    border-radius: 5px;
 }
 
 .primary-background-color{
-   background-color:#ec1411
+   background-color:#F80C35
 }
 .wishList-heart{
    top: 0%;
@@ -57,4 +53,55 @@ body{
    position: relative;
    top:10%;
    left:55%;
+}
+.swiper {
+   width: 100%;
+   height: 80%;
+}
+
+.swiper-slide {
+   text-align: center;
+   font-size: 18px;
+   background: #fff;
+
+   /* Center slide text vertically */
+   display: -webkit-box;
+   display: -ms-flexbox;
+   display: -webkit-flex;
+   display: flex;
+   -webkit-box-pack: center;
+   -ms-flex-pack: center;
+   -webkit-justify-content: center;
+   justify-content: center;
+   -webkit-box-align: center;
+   -ms-flex-align: center;
+   -webkit-align-items: center;
+   align-items: center;
+}
+
+.swiper-slide img {
+   display: block;
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+}
+
+.swiper-button-next , .swiper-button-prev {
+   color:white !important;
+}
+
+.shop-over-img-btn{
+   position:absolute;
+   top:50%;
+   left:50%;
+   transform:translate(-50%,-50%);
+   border: 1px solid black;
+    background: white;
+    color: black;
+    font-size: 12px;
+    width: 35%;
+    height: 8%;
+}
+.btn-check:checked+.btn-light{
+   background-color:#F80C35 !important;
 }

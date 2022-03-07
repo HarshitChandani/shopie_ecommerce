@@ -1,30 +1,41 @@
    {% extends 'layout.html' %}
-
+   {% load static %}
    {% block content %}
    <div class="d-flex justify-content-center">
-      <div class="signup-div m-5 p-3 w-25" style="box-shadow: 0px 0px 7px #ececec;">
-         <h5 class="fw-bold mb-3 pb-3" style="letter-spacing: 1px;">SIGN-UP</h5>
+      <div class="signup-div m-3 p-3 w-25" style="box-shadow: 0px 0px 7px #ececec;">
+         <h5 class="fw-bold mb-3 pb-3 text-dark" style="letter-spacing: 1px;">SIGN-UP
+            <img src="{% static 'signup.png' %}" height="30px">
+         </h5>
          <form method="POST" class="my-4" action="{% url 'website:Signup' %}">
          {% csrf_token %}
-            <div class="mb-3">
+            <div class="mb-3 form-outline">
                <label for="first_name" class="form-label">First Name<span style="color:red">*</span></label>
-               <input type="text" class="form-control w-100" id="first_name" name="first_name" aria-describedby="first_nameHelp" required>
+               <input type="text" class="form-control form-control-lg rounded border-bottom" id="first_name" name="first_name" aria-describedby="first_nameHelp" required>
             </div>
-            <div class="mb-3">
+            <div class="mb-3 form-outline">
                <label for="last_name" class="form-label">Last Name<span style="color:red">*</span></label>
-               <input type="text" class="form-control w-100" id="last_name" name="last_name" aria-describedby="last_nameHelp" required>
+               <input type="text" class="form-control form-control-lg rounded border-bottom" id="last_name" name="last_name" aria-describedby="last_nameHelp" required>
             </div>
-            <div class="mb-3">
+            <div class="mb-3 form-outline">
                <label for="username" class="form-label">Email<span style="color:red">*</span></label>
-               <input type="email" class="form-control" id="username" name="username" aria-describedby="emailHelp" required>
+               <input type="email" class="form-control form-control-lg rounded border-bottom" id="username" name="username" aria-describedby="emailHelp" required>
             </div>
-            <div class="mb-3">
+            <div class="mb-3 form-outline">
                <label for="password" class="form-label">Password<span style="color:red">*</span></label>
-               <input type="password" class="form-control" id="password" name="password" required>
+               <input type="password" class="form-control form-control-lg rounded border-bottom" id="password" name="password" required>
             </div>  
             <div class="mb-3 pt-1">        
                <button type="submit" class="btn btn-dark w-100 btn-block button">Submit</button>
             </div>
+            {% if messages %}
+               <ul class="errors list-group m-3">
+                  {% for message in messages %}
+                  <li class="{{message.tags}}" style="font-size:14px">
+                     {{message | capfirst }}
+                  </li>
+                  {% endfor %}
+               </ul>
+            {% endif %}
          </form>
          <div>
             Already have Account? <a href="{% url 'website:login' %}" role="button" class="text-dark fw-bold">LOGIN</a>

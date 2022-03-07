@@ -18,12 +18,11 @@
                       {% comment %} <span class="h1 fw-bold mb-0">Logo</span> {% endcomment %}
                     </div>
   
-                    <h5 class="fw-bold mb-3 pb-3" style="letter-spacing: 1px;">LOG-IN <span><img src="{% static 'login.png' %}" height="30px"></span></h5>
+                    <h5 class="fw-bold mb-3 pb-3 text-dark" style="letter-spacing: 1px;">LOG-IN <span><img src="{% static 'login.png' %}" height="30px"></span></h5>
   
                     <div class="form-outline mb-4">
                       <label class="form-label text-muted" for="username" >Email</label>
-                      <input type="text" id="username" name="username" class="form-control form-control-lg rounded border-bottom"/>
-                      
+                      <input type="text" id="username" name="username" class="form-control form-control-lg rounded border-bottom"/> 
                     </div>
   
                     <div class="form-outline mb-4">
@@ -42,7 +41,7 @@
                     {% if messages %}
                     <ul class="errors list-group m-3">
                       {% for message in messages %}
-                        <li class="text-danger" style="font-size:14px">
+                        <li class="{{message.tags}}" style="font-size:14px">
                           {{message | capfirst }}
                         </li>
                       {% endfor %}

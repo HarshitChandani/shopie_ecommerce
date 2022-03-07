@@ -135,12 +135,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL='/login/'
 LOGIN_REDIRECT_URL = ''
 
-
 #manually added
 MESSAGE_TAGS = {
-     messages.SUCCESS : 'alert-success',
-     messages.DEBUG : 'alert-secondar',
-     messages.ERROR: 'alert-danger',
-     messages.WARNING :'alert-warning',
-     messages.INFO :'alert-info'
+     messages.SUCCESS : 'text-success',
+     messages.DEBUG : 'text-secondary',
+     messages.ERROR: 'text-danger',
+     messages.WARNING :'text-warning',
+     messages.INFO :'text-info'
 }
+
+MEDIA_ROOT = "{}/media".format(BASE_DIR)
+MEDIA_URL = 'media/'

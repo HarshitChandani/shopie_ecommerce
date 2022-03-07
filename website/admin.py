@@ -59,7 +59,8 @@ class BrandAdmin(admin.ModelAdmin):
    list_display = [
       'pk',
       'slug',
-      'title'
+      'title',
+      'image'
    ]
 
 
@@ -70,10 +71,13 @@ class OrdersAdmin(admin.ModelAdmin):
       'order_date',
       'order_confirm',
       'order_received',
+      'order_cancelled',
       'gross_amt',
       'shipping',
       'net_amt',
-      'get_items'
+      'order_key',
+      'user',
+      
    ]
    exclude = [
       'slug',

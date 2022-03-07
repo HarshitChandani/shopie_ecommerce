@@ -1,4 +1,5 @@
-<nav class="navbar navbar-expand-xl navbar-light p-2" style="font-size:22px">
+<header>
+<nav class="navbar navbar-expand-xl  p-2 navbar-light" style="font-size:22px">
    <div class="container-fluid justify-content-between">
       <!-- Left elements -->
       <div class="d-flex">
@@ -24,12 +25,11 @@
          <a class="nav-link" href="#">
             <div class="occasions-navbar-section primary-color">
                {% for data in occasion_data %}
-                  <a href="{% url 'website:Occasion-Products' data.slug%}" class="primary-color" style="text-decoration:none;">|{{data.title}}|</a>
+                  <a href="{% url 'website:Occasion-Products' data.slug%}" style="text-decoration:none;color:black">|{{data.title | upper}}|</a>
                {% endfor %}
             </div>
          </a>
       </li>
-
    </ul>
 
       <!-- Center elements -->
@@ -41,14 +41,14 @@
                {% if user.is_authenticated %}
                   <i class="fa-solid fa-user fa-lg" style="color:#00b74a"></i>
                {% else %}
-               <i class="fa-solid fa-user fa-lg" style="color:#dc1313"></i>
+                  <i class="fa-solid fa-user fa-lg" style="color:#dc1313"></i>
                {% endif %}
             </a>
             <ul class="dropdown-menu dropdown-menu-right text-center" ara-labelledby="userDropDownMenu ">
                {% if user.is_authenticated %}
                   <li>
+                     <a class="dropdown-item" href="{% url 'website:order-summary' %}">Orders</a>
                      <a class="dropdown-item" href="{% url 'website:logout' %}">Logout</a>
-                     <a class="dropdown-item" href="#">Orders</a>
                   </li>
                {% else %}
                   <li>
@@ -68,3 +68,4 @@
       <!-- Right elements -->
     </div>
  </nav>
+</header>

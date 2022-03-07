@@ -1,6 +1,81 @@
 {% extends 'layout.html' %}
 
-
+   {% load static %}
    {% block content %}
-      
+      <style>
+         .brand-data-overlay{
+            position: relative;
+         }
+         .brand-img-overlay{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+            top:50%;
+            opacity:.8;
+            width: 100%;
+            height: 0;
+            transition: .6s ease;
+         }
+         .brand-data-overlay:hover .brand-img-overlay{
+            height:100%;
+         }
+         .brand-shop-btn{
+            background-color:black;
+            color:white;
+            font-weight:bold
+         }
+         .brand-shop-btn:hover{
+            color:white;
+         }
+         
+      </style>   
+      <!--- Category Div-->
+         <div>
+         {% include "components/banner.html" %}
+         </div>
+         <div class="d-flex flex-column flex-wrap my-4">
+            <div class="title text-center">
+               <h3 class="text-dark fw-bold">Collections</h3>
+            </div>
+            <div class="row  px-4 " style="position: relative;text-align:center">
+               <!--CATEGORY-->
+               {% for category in category_data %}
+                  <div class="col-lg-4 col-md-6 my-3 ">
+                     <img src="{{category.image.url}}" class="img-fluid w-100 h-auto opacity-75" />
+                     <a href="{% url 'website:Occasion-Products' category.slug %}">
+                        <button class="btn shop-over-img-btn" id="{{category.slug}}">Shop now</button>
+                     </a>
+                  </div>   
+               {% endfor %}
+            </div>
+         </div>
+         <div class="brand-view mt-4 py-3">
+            <div class="title text-center">
+               <h3 class="text-dark fw-bold">Brands</h3>
+            </div>
+            <div class="swiper BrandSwiper" style="height:30% !important;width:95%">
+               <div class="swiper-wrapper">
+                  {% for brands in  brand_data%}
+                     <div class="swiper-slide brand-data-overlay">
+                        <img src="{{brands.image.url}}" alt="{{brands.title | upper}}" style="width: 70%" id="brand-img" />   
+                        <div class="brand-img-overlay">
+                           <a href="{% url 'website:Brand-Products' brands.slug %}" role="button" class="btn btn-oultine-dark brand-shop-btn">Shop Now</a>
+                        </div>
+                     </div>
+                 {% endfor %}
+               </div>
+             </div>
+         </div>
+         <script>
+            var swiper = new Swiper(".BrandSwiper", {
+              slidesPerView: 4,
+              spaceBetween: 30,
+              freeMode: true,
+              autoplay:{
+                 delay:2000
+              },
+            });
+          </script>
    {% endblock content %}
